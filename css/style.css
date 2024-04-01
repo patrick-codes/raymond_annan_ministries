@@ -244,7 +244,7 @@ strong {
 }
 
 .navbar-brand {
-  font-size: 32px;
+  font-size: 18px;
   font-weight: var(--font-weight-bold);
   color: var(--primary-color2);
 }
@@ -258,7 +258,7 @@ strong {
   color: var(--p-color);
   font-size: var(--menu-font-size);
   font-weight: var(--font-weight-medium);
-  text-transform: uppercase;
+  text-transform:none;
   padding-top: 15px;
   padding-bottom: 15px;
 }
@@ -358,7 +358,7 @@ strong {
 }
 
 .site-header .social-icon {
-  text-align: right;
+  text-align:right;
 }
 
 
@@ -371,7 +371,7 @@ strong {
 }
 
 .section-hero {
-  background-image: url('../images/jason-goodman-MUZFKa_mttU-unsplash.jpg');
+ /* background-image: url('../images/slide/john-price-RAZQiZOX3mU-unsplash.jpg');*/
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
@@ -704,7 +704,7 @@ strong {
   SITE FOOTER              
 -----------------------------------------*/
 .site-footer {
-  background: var(--primary-color);
+  background: var(--primary-color2);
   padding-top: 40px;
   padding-bottom: 40px;
 }

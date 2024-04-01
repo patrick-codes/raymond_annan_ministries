@@ -1,3 +1,34 @@
+<?php
+include '../raymond_annan_ministries/php/functions.php';
+
+// Connect to the database
+$pdo = pdo_connect_mysql();
+
+// Pagination logic
+$page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
+$records_per_page = 5;
+
+// Get total number of contacts
+$num_contacts = $pdo->query('SELECT COUNT(*) FROM contacts')->fetchColumn();
+
+// Calculate the total number of pages
+$total_pages = ceil($num_contacts / $records_per_page);
+
+// Ensure that the current page is within the valid range
+$page = max(1, min($page, $total_pages));
+
+// Calculate the offset for the SQL query
+$offset = ($page - 1) * $records_per_page;
+
+// Fetch contacts data for the current page
+$stmt = $pdo->prepare('SELECT * FROM contacts ORDER BY id LIMIT :offset, :records_per_page');
+$stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+$stmt->bindValue(':records_per_page', $records_per_page, PDO::PARAM_INT);
+$stmt->execute();
+$contacts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+?>
+
+
 <!doctype html>
 <html lang="en">
 
@@ -15,7 +46,7 @@
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/bootstrap-icons.css" rel="stylesheet">
     <link href="css/magnific-popup.css" rel="stylesheet">
-    <link href="css/tooplate-waso-strategy.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
 
 
 </head>
@@ -30,15 +61,7 @@
                         Mon-Sun. 10:00-19:00
                     </p>
                 </div>
-                <div class="col-lg-2 col-md-3 col-5">
-                    <p class="text-white mb-0">
-                       
-                    </p>
-                    <img src="images/Ghana-Flag-Download-PNG-Image.png" alt="Logo" width="30" height="30">
-                    <img src="images/circle-flag-of-usa-free-png.webp" alt="Logo" width="30" height="30">
-                    <img src="images/circle-flag-of-canada-free-png.webp" alt="Logo" width="30" height="30">
-                    <img src="images/england-circle-512.webp" alt="Logo" width="30" height="30">
-                </div>
+               
                 <div class="col-lg-2 col-md-3 col-5">
                     <p class="text-white mb-0">
                         <a href="tel: 0245-513-607" class="text-white">
@@ -54,7 +77,17 @@
                         </a>
                     </p>
                 </div>
+                <div class="col-lg-2 col-md-3 col-5">
+                    <p class="text-white mb-0">
+                       
+                    </p>
+                    <img src="images/Ghana-Flag-Download-PNG-Image.png" alt="Logo" width="20" height="20">
+                    <img src="images/circle-flag-of-usa-free-png.webp" alt="Logo" width="20" height="20">
+                    <img src="images/circle-flag-of-canada-free-png.webp" alt="Logo" width="20" height="20">
+                    <img src="images/england-circle-512.webp" alt="Logo" width="20" height="20">
+                    <img src="images/flag-3d-round-250.png" alt="Logo" width="20" height="20">
 
+                </div>
                 <div class="col-lg-3 col-md-3 col-12 ms-auto">
                     <ul class="social-icon">
                         <li><a href="https://facebook.com/" class="social-icon-link bi-facebook"></a></li>
@@ -66,7 +99,7 @@
                         <li><a href="https://www.youtube.com/" class="social-icon-link bi-youtube"></a></li>
                     </ul>
                 </div>
-
+                
             </div>
         </div>
     </header>
@@ -74,7 +107,7 @@
     <nav class="navbar navbar-expand-lg bg-white shadow-lg">
         <div class="container">
 
-            <a href="#" class="navbar-brand">Raymond Annang <span class="text-danger">Ministries</span></a>
+            <a href="#" class="navbar-brand">Raymond Annang <span class="text-danger">Ministries Intl.</span></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -86,7 +119,6 @@
                         <a class="nav-link click-scroll" href="#section_1"><small class="small-title"><strong
                                     class="text-warning"></strong></small> Home</a>
                     </li>
-
                     <li class="nav-item">
                         <a class="nav-link click-scroll" href="#section_2"><small class="small-title"><strong
                                     class="text-warning"></strong></small> Mission</a>
@@ -94,12 +126,17 @@
 
                     <li class="nav-item">
                         <a class="nav-link click-scroll" href="#section_3"><small class="small-title"><strong
-                                    class="text-warning"></strong></small> Gallery</a>
+                                    class="text-warning"></strong></small> iPray</a>
                     </li>
 
                     <li class="nav-item">
                         <a class="nav-link click-scroll" href="#section_4"><small class="small-title"><strong
-                                    class="text-warning"></strong></small> iPray</a>
+                                    class="text-warning"></strong></small> Gallery</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link click-scroll" href="#"><small class="small-title"><strong
+                                    class="text-warning"></strong></small> Prophetic declarations</a>
                     </li>
 
                     <li class="nav-item">
@@ -108,7 +145,6 @@
                     </li>
                 </ul>
                 <div>
-
                 </div>
     </nav>
 
@@ -117,17 +153,18 @@
         <section class="hero">
             <div class="container-fluid h-100">
                 <div class="row h-100">
-
                     <div id="carouselExampleCaptions" class="carousel carousel-fade hero-carousel slide"
                         data-bs-ride="carousel">
                         <div class="carousel-inner">
+                        <?php foreach ($contacts as $contact): ?>
+
                             <div class="carousel-item active">
                                 <div class="container position-relative h-100">
                                     <div class="carousel-caption d-flex flex-column justify-content-center">
-                                        <small class="small-title">Introducing Raymond Annang Ministries Inc. <strong
+                                        <small class="small-title"><?=$contact['name']?> <strong
                                                 class="text-warning">21/03/24</strong></small>
 
-                                        <h1>Holy Week <span class="text-warning">Gathering</span></h1>
+                                        <h1>Be A Partner <span class="text-warning">Of Hope</span></h1>
 
                                         <div class="d-flex align-items-center mt-4">
                                             <a class="custom-btn btn custom-link" href="#section_2">Prayer Request</a>
@@ -141,36 +178,14 @@
                                 </div>
 
                                 <div class="carousel-image-wrap">
-                                    <img src="images/slide/sincerely-media-dGxOgeXAXm8-unsplash.jpg"
+                                <?php  ($contact['image'])?>
+                                    <img src="<?=$contact['image']?>"
                                         class="img-fluid carousel-image" alt="">
+
                                 </div>
-                            </div>
+                                <?php endforeach; ?>
 
-                            <div class="carousel-item">
-                                <div class="container position-relative h-100">
-                                    <div class="carousel-caption d-flex flex-column justify-content-center">
-                                        <small class="small-title">Supporting The Church <strong
-                                                class="text-warning">22/03/24</strong></small>
-
-                                        <h1>Empowering <span class="text-warning">The Church</span></h1>
-
-                                        <div class="d-flex align-items-center mt-4">
-                                            <a class="custom-btn btn custom-link" href="#section_2">Prayer Request</a>
-
-                                            <a class="popup-youtube custom-icon d-flex ms-4"
-                                                href="https://www.youtube.com/watch?v=2un2PHmbnuM">
-                                                <i class="bi-play play-icon d-flex m-auto text-white"></i>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="carousel-image-wrap">
-                                    <img src="images/slide/samuel-martins-3U7HcqkIbb4-unsplash.jpg"
-                                        class="img-fluid carousel-image" alt="">
-                                </div>
-                            </div>
-
+                            </div>             
                             <button class="carousel-control-prev" type="button"
                                 data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
                                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -183,12 +198,13 @@
                                 <span class="visually-hidden">Next</span>
                             </button>
                         </div>
+                        
                     </div>
-
                 </div>
-            </div>
-        </section>
 
+            </div>
+          
+        </section>
 
         <section class="about section-padding" id="section_2">
             <div class="container">
@@ -223,7 +239,7 @@
                                     
                                     Click the button below to learn more..</p>
 
-                                <p>You may support a little PayPal donation to the ministry by visiting our <a
+                                <p>You may support a little donation to the ministry by visiting our <a
                                         href="">contact page</a>. Thank you.</p>
                             </div>
                         </div>
@@ -234,9 +250,9 @@
                                     class="about-thumb d-flex flex-column justify-content-center bg-danger mb-lg-0 h-100">
 
                                     <div class="about-info">
-                                        <h5 class="text-white mb-4">We're a growing ministry</h5>
+                                        <h5 class="text-white mb-4">Be a partner of hope</h5>
 
-                                        <a class="custom-btn btn custom-bg-primary" href="#section_3">Join us</a>
+                                        <a class="custom-btn btn custom-bg-primary" href="project-detail.html">Join us</a>
                                     </div>
                                 </div>
                             </div>
@@ -246,7 +262,7 @@
                                     class="about-thumb d-flex flex-column justify-content-center bg-warning mb-lg-0 h-100">
 
                                     <div class="about-info">
-                                        <h5 class="text-white mb-4">How did you hear about us?</h5>
+                                        <h5 class="text-white mb-4">We're a growing ministry</h5>
 
                                         <p class="text-white mb-0">Lets join hands to worhsip God</p>
                                     </div>
@@ -263,9 +279,9 @@
             <div class="container">
                 <div class="row">
                     <div class="col-lg-10 col-12 text-center mx-auto mb-5">
-                        <small class="small-title">Projects <strong class="text-warning">04/05</strong></small>
+                        <small class="small-title">Upcoming & Previous <strong class="text-warning">Events</strong></small>
 
-                        <h2>Brands we've crafted so far</h2>
+                        <h2>Upcoming Programs</h2>
                     </div>
 
                     <div class="col-lg-4 col-12">
@@ -593,8 +609,7 @@
             </div>
         </div>
     </footer>
-
-    <script src="js/jquery.min.js"></script>
+   <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/jquery.sticky.js"></script>
     <script src="js/jquery.magnific-popup.min.js"></script>
